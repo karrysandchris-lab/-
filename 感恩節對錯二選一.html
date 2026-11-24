@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>感恩節對錯二選一</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#ffd9bf;--ink:#3a1d0c;--wood:#e9a74f;--wood-d:#7a4522;--yes:#2e9e4f;--no:#d9402f;--card:#fff6e8;--btn:#7a4522;--btnink:#fff6e8;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a160b;--ink:#ffe9d2;--wood:#9a6428;--wood-d:#4a2812;--yes:#3cb862;--no:#e5594a;--card:#3a2012;--btn:#e9a74f;--btnink:#2a160b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#2a160b;--ink:#ffe9d2;--wood:#9a6428;--wood-d:#4a2812;--yes:#3cb862;--no:#e5594a;--card:#3a2012;--btn:#e9a74f;--btnink:#2a160b;color-scheme:dark}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;padding:12px 14px 16px;gap:12px}
+.top{width:100%;max-width:900px;display:flex;align-items:center;gap:10px}
+.bar{flex:1;height:16px;border:3px solid var(--ink);border-radius:99px;background:var(--card);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--wood-d);width:0;transition:width .3s}
+.num{font-weight:800;border:3px solid var(--ink);border-radius:99px;padding:2px 12px;background:var(--card)}
+.board{width:100%;max-width:900px;flex:1;min-height:150px;display:flex;align-items:center;justify-content:center;text-align:center;
+background:linear-gradient(135deg,var(--wood),color-mix(in srgb,var(--wood) 80%,#fff));border:10px solid var(--wood-d);border-radius:24px;padding:18px;
+box-shadow:0 8px 0 var(--wood-d);font-weight:900;font-size:clamp(30px,7.5vw,64px);line-height:1.45;color:#fff;-webkit-text-stroke:8px #3a1d0c;paint-order:stroke fill;text-shadow:0 3px 0 #3a1d0c}
+.board small{display:block;margin-top:10px;font-size:.6em;font-weight:700;opacity:0}
+.board.show small{opacity:1;transition:opacity .3s}
+.row{width:100%;max-width:900px;display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch}
+.side{border:5px solid var(--ink);border-radius:26px;font-size:clamp(34px,9vw,64px);font-weight:900;color:#fff;min-height:130px;cursor:default;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .3s,opacity .3s,box-shadow .3s}
+.side span{font-size:.28em;font-weight:700;opacity:.9}
+.yes{background:var(--yes)}.no{background:var(--no)}
+.side.win{transform:scale(1.06);box-shadow:0 0 0 8px #ffd23f,0 0 30px #ffd23f}
+.side.lose{opacity:.25;transform:scale(.94)}
+.mid{display:flex;flex-direction:column;gap:8px;justify-content:center}
+button{font:inherit;cursor:pointer;border:4px solid var(--ink);background:var(--btn);color:var(--btnink);border-radius:18px;padding:12px 14px;font-weight:800}
+#reveal{font-size:clamp(18px,4vw,28px);padding:18px 14px}
+.nav{display:flex;gap:8px}.nav button{flex:1;font-size:16px;padding:8px}
+button:active{transform:translateY(2px)}
+body{padding-bottom:56px;background:radial-gradient(rgba(255,255,255,.35) 2px,transparent 2.5px) 0 0/30px 30px,radial-gradient(circle at 10% 6%,rgba(255,190,80,.6),transparent 38%),radial-gradient(circle at 92% 90%,rgba(255,120,60,.4),transparent 40%),var(--bg);background-attachment:fixed}
+.title,.top,.board,.row{position:relative;z-index:1}
+.title{background:var(--wood-d);color:#fff2dc;font-weight:900;font-size:clamp(18px,4.6vw,30px);padding:6px 26px;border-radius:99px;border:4px solid var(--ink);box-shadow:0 5px 0 rgba(0,0,0,.25);letter-spacing:2px;text-align:center}
+.board::before{content:"🍂";position:absolute;left:-4px;top:-26px;font-size:42px;transform:rotate(-20deg)}
+.board::after{content:"🎃";position:absolute;right:-2px;bottom:-30px;font-size:46px}
+.fall{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.fall span{position:absolute;top:-8vh;animation:fall linear infinite}
+@keyframes fall{from{transform:translateY(0) rotate(0)}to{transform:translateY(115vh) rotate(360deg)}}
+.ground{position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom,0px);text-align:center;font-size:30px;letter-spacing:10px;white-space:nowrap;overflow:hidden;pointer-events:none;z-index:0;line-height:1.3}
+.side.win{animation:hop .6s ease 2}
+@keyframes hop{50%{transform:scale(1.14) rotate(-3deg)}}
+@media (prefers-reduced-motion:reduce){.fall{display:none}.side.win{animation:none}}
+</style>
+</head>
+<body>
+<div class="fall" id="fall" aria-hidden="true"></div>
+<div class="ground" aria-hidden="true">🌽🥧🍎🎃🍂🥕🌰🍁🦃🌽🥧🍎🎃🍂🥕🌰</div>
+<div class="title">🦃 感恩節對錯大挑戰 🍁</div>
+<div class="top"><div class="bar"><i id="fill"></i></div><div class="num" id="num"></div></div>
+<div class="board" id="board"><div><span id="q"></span><small id="exp"></small></div></div>
+<div class="row">
+  <div class="side yes" id="sy">對<span>站左邊</span></div>
+  <div class="mid">
+    <button id="reveal">看答案</button>
+    <div class="nav"><button id="prev">←</button><button id="next">→</button></div>
+  </div>
+  <div class="side no" id="sn">錯<span>站右邊</span></div>
+</div>
+<script>
+// 要新增題目：複製一行，answer 填 true(對) 或 false(錯)
+const Q=[
+{q:"最早的感恩節，人們吃鹿肉、禽肉、魚類和海鮮，也吃南瓜，但不是做成南瓜派",answer:true,exp:"1621 年的秋收慶宴有鹿肉、野禽和海鮮，也有南瓜，但當時還沒有南瓜派。"},
+{q:"美國的第一個感恩節是在2021年舉行的",answer:false,exp:"第一個感恩節是在 1621 年，普利茅斯的移民與萬帕諾亞格人一起舉行秋收慶祝。"},
+{q:"加拿大感恩節在十一月第二個星期一",answer:false,exp:"加拿大感恩節是在「十月」的第二個星期一，比美國早。"},
+{q:"美國感恩節在十一月第四個星期四",answer:true,exp:"美國感恩節固定在十一月的第四個星期四。"},
+{q:"美國人在感恩節會吃掉大量火雞，但總統每年會在白宮「赦免」幸運火雞，讓牠們免上餐桌、到農場安養",answer:true,exp:"這是白宮每年的感恩節傳統，稱為「火雞赦免」。"},
+{q:"「火雞路跑」是讓火雞參加賽跑",answer:false,exp:"火雞路跑（Turkey Trot）是感恩節早上讓「人」參加的路跑活動。"}
+];
+let i=0,shown=false;
+const $=id=>document.getElementById(id);
+function render(){
+  const d=Q[i];shown=false;
+  $("q").textContent=d.q;$("exp").textContent="";$("board").classList.remove("show");
+  $("sy").className="side yes";$("sn").className="side no";
+  $("num").textContent=(i+1)+" / "+Q.length;
+  $("fill").style.width=((i+1)/Q.length*100)+"%";
+  $("reveal").textContent="看答案";
+}
+function reveal(){
+  const d=Q[i];shown=true;
+  $("sy").className="side yes "+(d.answer?"win":"lose");
+  $("sn").className="side no "+(d.answer?"lose":"win");
+  $("exp").textContent=(d.answer?"答案：對！":"答案：錯！")+d.exp;
+  $("board").classList.add("show");
+  $("reveal").textContent="隱藏答案";
+}
+$("reveal").onclick=()=>shown?render():reveal();
+$("next").onclick=()=>{i=(i+1)%Q.length;render()};
+$("prev").onclick=()=>{i=(i-1+Q.length)%Q.length;render()};
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight")$("next").click();
+  else if(e.key==="ArrowLeft")$("prev").click();
+  else if(e.key===" "||e.key==="Enter"){e.preventDefault();$("reveal").click()}
+});
+const L=["🍂","🍁","🍃","🌰","🍂","🍁"];
+for(let k=0;k<16;k++){const s=document.createElement("span");s.textContent=L[k%L.length];
+  s.style.left=(Math.random()*96)+"%";s.style.fontSize=(18+Math.random()*18)+"px";
+  s.style.animationDuration=(9+Math.random()*9)+"s";s.style.animationDelay=(-Math.random()*18)+"s";
+  $("fall").appendChild(s)}
+render();
+</script>
+</body>
+</html>
